@@ -2,16 +2,20 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
+// 1. Define a more detailed User type
+// We use 'any' here for the dummy login, but in a real app
+// you'd define every single field (name, hospitalName, etc.)
 interface User {
-  email: string;
-  role: 'customer' | 'hospital';
-  name: string; 
+  role: 'patient' | 'hospital';
+  name: string; // Patient name OR Hospital name
+  email: string; // Patient email OR Hospital email
+  [key: string]: any; // Allow any other form data
 }
 
-// Define the shape of the context data
+// 2. Define the shape of the context data
 interface AuthContextType {
   user: User | null; 
-  isAuthenticated: boolean; // This will be derived from 'user'
+  isAuthenticated: boolean; 
   login: (userData: User) => void;
   logout: () => void;
 }
@@ -21,25 +25,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Create the provider component
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    // 1. We only need ONE state for the user
     const [user, setUser] = useState<User | null>(null);
 
   // Dummy login function
   const login = (userData: User) => {
     console.log("Dummy login with user data:", userData);
-    // 2. Just set the user. 'isAuthenticated' will update automatically.
     setUser(userData);
   };
 
   // Dummy logout function
   const logout = () => {
-    // 3. Just set the user to null.
     setUser(null);
   };
 
   return (
-    // 4. 'isAuthenticated' is now correctly derived from '!!user'
-    //    (!!user) is a trick that means "true if user is not null, false if it is"
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
       {children}
     </AuthContext.Provider>
