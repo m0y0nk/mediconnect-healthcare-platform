@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Navbar } from "@/components/Navbar";
+// import { Navbar } from "@/components/Navbar";
 import { EmergencyButton } from "@/components/EmergencyButton";
 import { hospitalsData } from "@/data/hospitalsData";
 import { Heart, MapPin, Phone, Navigation, Droplets } from "lucide-react";
@@ -55,7 +55,7 @@ export default function BloodBankPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-white">
-      <Navbar />
+      {/* <Navbar /> */}
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-red-600 to-red-800 text-white py-16 px-4">

@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart, LogIn, UserPlus } from "lucide-react";
+// 1. Import new icons
+import { Heart, LogIn, UserPlus, LogOut, Hospital } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext"; // Import the useAuth hook
 
-export function Navbar() {
+export default function Navbar() {
   const pathname = usePathname();
+  // 2. Get the full user object, not just isAuthenticated
+  const { user, isAuthenticated, logout } = useAuth(); // Get auth state and functions
 
   const navItems = [
     { href: "/", label: "Home" },
@@ -40,21 +44,70 @@ export function Navbar() {
                     : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                 }`}
               >
-                {item.label==="Categories" ? "Find Hospital" : item.label}
+                {item.label === "Categories" ? "Find Hospital" : item.label}
               </Link>
             ))}
+
+            {/* 3. Add conditional "Hospital Dashboard" link */}
+            {isAuthenticated && user?.role === 'hospital' && (
+              <Link
+                href="/hospital-dashboard" // You can create this page later
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${
+                  pathname === "/hospital-dashboard"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                }`}
+              >
+                <Hospital className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
+            )}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Auth Buttons - NOW DYNAMIC */}
           <div className="flex items-center space-x-3">
-            <Button variant="outline" size="sm" className="hidden sm:flex items-center space-x-2">
-              <LogIn className="h-4 w-4" />
-              <span>Login</span>
-            </Button>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2">
-              <UserPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Sign Up</span>
-            </Button>
+            {isAuthenticated ? (
+              // 4. Show welcome message and Logout
+              <>
+                <span className="hidden sm:inline text-sm text-gray-700 font-medium">
+                  Welcome, {user?.name}
+                </span>
+                <Button
+                  onClick={logout}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
+              </>
+            ) : (
+              // Show Login/Sign Up buttons if logged out
+              <>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex items-center space-x-2"
+                >
+                  <Link href="/login">
+                    <LogIn className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 flex items-center space-x-2"
+                >
+                  <Link href="/signup">
+                    <UserPlus className="h-4 w-4" />
+                    <span className="hidden sm:inline">Sign Up</span>
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -73,6 +126,20 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
+          {/* 5. Add dashboard link to mobile too */}
+          {isAuthenticated && user?.role === 'hospital' && (
+            <Link
+              href="/hospital-dashboard"
+              className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1 ${
+                pathname === "/hospital-dashboard"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:bg-blue-50"
+              }`}
+            >
+              <Hospital className="h-4 w-4" />
+              <span>Dashboard</span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>

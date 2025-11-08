@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar } from "@/components/Navbar";
+// import Navbar from "@/components/Navbar";
 import { EmergencyButton } from "@/components/EmergencyButton";
 import { Heart, Target, Eye, Users, Award, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +42,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      {/* <Navbar /> */}
 
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20 px-4">
