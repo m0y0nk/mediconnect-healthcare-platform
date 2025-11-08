@@ -144,7 +144,7 @@ src/
 
 ```bash
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 # or
 bun install
 
