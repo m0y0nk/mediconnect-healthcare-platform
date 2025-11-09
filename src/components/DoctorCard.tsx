@@ -4,8 +4,16 @@ import { useState } from "react";
 import { GraduationCap, Briefcase, IndianRupee, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Doctor } from "@/data/hospitalsData";
-import { BookingModal } from "./BookingModal";
 import Image from "next/image";
+
+// --- START: Imports for New Modal ---
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { MultiStepBookingModal } from "./MultiStepBookingModal";
+// --- END: Imports for New Modal ---
 
 interface DoctorCardProps {
   doctor: Doctor;
@@ -13,10 +21,12 @@ interface DoctorCardProps {
 }
 
 export function DoctorCard({ doctor, hospitalName }: DoctorCardProps) {
-  const [showBooking, setShowBooking] = useState(false);
+  // We use this state to control the Dialog
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <>
+    // Wrap the entire component in the Dialog
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <div className="border rounded-lg p-3 hover:shadow-md transition-shadow bg-white">
         <div className="flex space-x-3">
           {/* Doctor Photo */}
@@ -57,25 +67,35 @@ export function DoctorCard({ doctor, hospitalName }: DoctorCardProps) {
               </div>
             </div>
 
-            <Button
-              size="sm"
-              className="w-full mt-3 h-8 text-xs bg-blue-600 hover:bg-blue-700"
-              onClick={() => setShowBooking(true)}
-              disabled={!doctor.available}
-            >
-              <Calendar className="h-3 w-3 mr-1" />
-              {doctor.available ? "Book Now" : "Unavailable"}
-            </Button>
+            {/* --- THIS IS THE CHANGE --- */}
+            {/* The Button is now a DialogTrigger. */}
+            {/* We removed the old onClick={() => setShowBooking(true)} */}
+            <DialogTrigger asChild>
+              <Button
+                size="sm"
+                className="w-full mt-3 h-8 text-xs bg-blue-600 hover:bg-blue-700"
+                disabled={!doctor.available}
+              >
+                <Calendar className="h-3 w-3 mr-1" />
+                {doctor.available ? "Book Now" : "Unavailable"}
+              </Button>
+            </DialogTrigger>
+            {/* --- END OF CHANGE --- */}
+            
           </div>
         </div>
       </div>
 
-      <BookingModal
-        doctor={doctor}
-        hospitalName={hospitalName}
-        isOpen={showBooking}
-        onClose={() => setShowBooking(false)}
-      />
-    </>
+      {/* This is the new Dialog Content that will pop up.
+        It's invisible until the button is clicked.
+        We pass both 'doctor' and 'hospitalName' to it.
+      */}
+      <DialogContent
+        className="p-0 max-w-md"
+        onCloseAutoFocus={() => setIsModalOpen(false)}
+      >
+        <MultiStepBookingModal doctor={doctor} hospitalName={hospitalName} />
+      </DialogContent>
+    </Dialog>
   );
 }
